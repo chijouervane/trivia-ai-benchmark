@@ -24,3 +24,6 @@ dbt_project/warehouse/*.duckdb
 .DS_Store
 .vscode/
 .idea/
+
+# Local docs (not versioned)
+docs/

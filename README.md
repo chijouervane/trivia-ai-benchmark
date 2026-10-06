@@ -2,7 +2,7 @@
 
 Benchmark des performances d'un ou plusieurs modèles d'IA (via Ollama) sur des questions de culture générale issues d'[Open Trivia Database](https://opentdb.com/), avec une architecture en médaillon (bronze/silver/gold) et un dashboard Streamlit.
 
-Projet M1 Data Engineering (Efrei) — voir [`PLAN.md`](./PLAN.md) pour le déroulé détaillé étape par étape.
+Projet M1 Data Engineering (Efrei) — voir [`PLAN.md`](./docs/PLAN.md) pour le déroulé détaillé étape par étape.
 
 ## Architecture
 
@@ -22,8 +22,8 @@ Projet M1 Data Engineering (Efrei) — voir [`PLAN.md`](./PLAN.md) pour le déro
 │       └── marts/             # tables (schéma gold) — 1 modèle par question métier
 ├── ingestion/      # scripts Python : scraping OpenTDB + enrichissement via Ollama
 ├── app/            # application Streamlit (dashboard)
-├── requirements.txt
-└── PLAN.md
+├── docs/           # local only (gitignored): PLAN.md, opentdb_api.md
+└── requirements.txt
 ```
 
 ## Setup
@@ -57,4 +57,4 @@ cp dbt_project/profiles.yml.example ~/.dbt/profiles.yml
 
 ## Méthodologie
 
-Voir [`PLAN.md`](./PLAN.md) pour le détail des choix techniques, le planning et le brief complet.
+Voir [`PLAN.md`](./docs/PLAN.md) pour le détail des choix techniques, le planning et le brief complet.
