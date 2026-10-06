@@ -12,10 +12,10 @@ data/gold/*.duckdb
 !data/gold/.gitkeep
 
 # dbt
-dbt_project/target/
-dbt_project/dbt_packages/
-dbt_project/logs/
-dbt_project/warehouse/*.duckdb
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/warehouse/*.duckdb
 
 # Env / secrets
 .env
