@@ -1,0 +1,7 @@
+requests
+pandas
+pyarrow
+ollama
+dbt-duckdb
+duckdb
+streamlit
