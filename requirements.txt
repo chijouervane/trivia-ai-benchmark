@@ -1,17 +1,8 @@
-# --- Ingestion (bronze) ---
-requests      # HTTP calls to the OpenTDB API (scraping questions)
-
-# --- Data processing (silver) ---
-pandas        # Load, clean and transform tables (CSV -> DataFrame -> Parquet)
-pyarrow       # Parquet engine used by pandas to read/write .parquet files
-
-# --- AI enrichment ---
-ollama        # Python client for the local Ollama server (ask questions to the LLM)
+requests      # Appels HTTP à l'API OpenTDB (scraping des questions)
+pandas        # Charger, nettoyer et transformer les tables (CSV -> DataFrame -> Parquet)
+pyarrow       # Moteur Parquet utilisé par pandas pour lire/écrire les fichiers .parquet
+ollama        # Client Python du serveur Ollama local (poser les questions au modèle)
 tqdm          # Barre de progression pendant que le modèle répond
-
-# --- Modeling (gold) ---
-dbt-duckdb    # dbt + DuckDB adapter: builds staging -> intermediate -> marts models
-duckdb        # Embedded SQL database storing the gold layer (also queried by Streamlit)
-
-# --- Visualization ---
-streamlit     # Interactive web dashboard for the benchmark results
+dbt-duckdb    # dbt + adaptateur DuckDB : construit les modèles staging -> intermediate -> marts
+duckdb        # Base SQL embarquée qui stocke la couche gold (aussi lue par Streamlit)
+streamlit     # Dashboard web interactif des résultats du benchmark

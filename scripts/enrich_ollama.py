@@ -4,14 +4,15 @@ Silver : enrichissement des questions avec les réponses d'un modèle d'IA (Olla
 Lit data/silver/questions.parquet, pose chaque question au modèle et écrit
 data/silver/ai_answers_<modele>.parquet avec les colonnes demandées :
     - ai_answer     : réponse brute du modèle
-    - ai_correct    : True si la réponse (normalisée) = la bonne réponse (normalisée)
+    - ai_correct    : True si le modèle a donné la bonne réponse
     - response_time : temps de génération en secondes
 
 Prérequis : serveur Ollama lancé et modèle téléchargé (ollama pull <modele>).
-Lancement : uv run python scripts/enrich_ollama.py
+Lancement : uv run python scripts/enrich_ollama.py [modele]   (défaut : gemma2:2b)
 """
 
 import re
+import sys
 import time
 import unicodedata
 from pathlib import Path
@@ -21,18 +22,22 @@ import pandas as pd
 from tqdm import tqdm
 
 # --- Paramètres du benchmark : à modifier ici ---
-MODEL = "llama3.2:1b"
-LIMIT = 50  # nombre de questions à traiter ; None = tout le dataset
+# Le modèle peut être donné en argument : uv run python scripts/enrich_ollama.py gemma2:2b
+MODEL = sys.argv[1] if len(sys.argv) > 1 else "gemma2:2b"
+LIMIT = None  # nombre de questions à traiter ; None = tout le dataset
 
-# Prompt standardisé et versionné : on garde sa trace dans le dataset (cf. brief)
-PROMPT_VERSION = "v1"
+# Prompt standardisé : le même pour toutes les questions et tous les modèles.
+# Prompt retenu après tests sur 50 questions (lettres 54 %, texte 50 %, consignes en français 26 %) :
+# choix numérotés A, B, C, D, le modèle répond seulement par la lettre
 PROMPT_TEMPLATE = """Answer the following trivia question.
-Reply with ONLY the exact text of the correct choice, nothing else.
+Reply with ONLY the letter of the correct choice, nothing else.
 
 Question: {question}
 Choices:
 {choices}
 Answer:"""
+
+LETTERS = "ABCD"
 
 ROOT = Path(__file__).resolve().parent.parent
 INPUT = ROOT / "data" / "silver" / "questions.parquet"
@@ -41,8 +46,8 @@ OUTPUT = ROOT / "data" / "silver" / f"ai_answers_{MODEL.replace(':', '-')}.parqu
 
 
 def build_prompt(question, choices):
-    """Insère la question et les choix (un par ligne) dans le prompt."""
-    choices_text = "\n".join(f"- {choice}" for choice in choices)
+    """Insère la question et les choix numérotés (A. ..., B. ...) dans le prompt."""
+    choices_text = "\n".join(f"{letter}. {choice}" for letter, choice in zip(LETTERS, choices))
     return PROMPT_TEMPLATE.format(question=question, choices=choices_text)
 
 
@@ -55,6 +60,13 @@ def normalize(text):
     text = text.encode("ascii", "ignore").decode("ascii")  # supprime les accents
     text = re.sub(r"[^\w\s]", "", text.lower())  # supprime la ponctuation
     return " ".join(text.split())  # supprime les espaces en trop
+
+
+def is_correct(ai_answer, question):
+    """Compare la lettre donnée par le modèle à la lettre de la bonne réponse."""
+    # Lettre attendue = position de la bonne réponse dans les choix mélangés
+    expected = LETTERS[list(question.choices).index(question.correct_answer)]
+    return ai_answer[:1].upper() == expected  # 1re lettre de la réponse ("D." → "D")
 
 
 def ask(prompt):
@@ -81,10 +93,9 @@ for i, question in enumerate(tqdm(df.itertuples(), total=len(df), desc=MODEL)):
     rows.append({
         "question_id": question.question_id,
         "model": MODEL,
-        "prompt_version": PROMPT_VERSION,
         "prompt": prompt,
         "ai_answer": ai_answer,
-        "ai_correct": normalize(ai_answer) == normalize(question.correct_answer),
+        "ai_correct": is_correct(ai_answer, question),
         "response_time": round(response_time, 3),
     })
     # Sauvegarde régulière : si le script plante au bout d'une heure, on ne perd pas tout

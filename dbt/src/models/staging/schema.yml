@@ -1,0 +1,26 @@
+version: 2
+
+# Tests de qualité de la donnée (Cours 3 : contrôle sur chaque couche), lancés par `dbt test`
+models:
+  - name: stg_questions
+    columns:
+      - name: question_id
+        tests:
+          - unique      # pas de doublon (supprimés dans clean_questions.py)
+          - not_null
+      - name: correct_letter
+        tests:
+          - not_null    # la bonne réponse est toujours présente dans les choix
+
+  - name: stg_ai_answers
+    columns:
+      - name: question_id
+        tests:
+          - not_null
+          - relationships:   # chaque réponse correspond à une question existante
+              arguments:
+                to: ref('stg_questions')
+                field: question_id
+      - name: model
+        tests:
+          - not_null

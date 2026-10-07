@@ -1,8 +1,19 @@
 version: 2
 
+# Sources silver : les fichiers Parquet produits par les scripts Python.
+# Le chemin n'est écrit qu'ici (meta.external_location, comme dans le TP Spotify) :
+# les modèles utilisent ensuite {{ source('silver', '...') }} sans jamais le répéter.
+# Chemins relatifs au dossier dbt/, d'où on lance `dbt run`.
 sources:
   - name: silver
     tables:
       - name: questions
+        description: "Questions OpenTDB nettoyées (une ligne par question)"
         meta:
-          external_location: "read_parquet('../data/silver/questions_enriched.parquet')"
+          external_location: "read_parquet('../data/silver/questions.parquet')"
+
+      - name: ai_answers
+        description: "Réponses brutes des modèles (une ligne par question et par modèle)"
+        meta:
+          # Le * lit tous les modèles d'un coup, comme *_tracks.parquet dans le TP
+          external_location: "read_parquet('../data/silver/ai_answers_*.parquet')"

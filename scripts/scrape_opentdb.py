@@ -46,5 +46,6 @@ while remaining > 0:
     print(f"{len(all_questions)} questions récupérées")
 
 # JSON → CSV : une ligne par question, une colonne par clé JSON
+OUTPUT.parent.mkdir(parents=True, exist_ok=True)  # data/bronze/ n'existe pas après un git clone
 pd.DataFrame(all_questions).to_csv(OUTPUT, index=False)
 print(f"{len(all_questions)} questions enregistrées dans {OUTPUT}")

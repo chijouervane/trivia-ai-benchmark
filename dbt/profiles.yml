@@ -1,7 +1,8 @@
-# Copier ce fichier vers ~/.dbt/profiles.yml (PAS dans le repo — config locale/utilisateur)
+# Connexion de dbt à la base : lu automatiquement quand on lance dbt depuis le dossier dbt/
+# (aucun secret ici, seulement le chemin du fichier DuckDB local → peut être versionné)
 trivia_tp:
   target: dev
   outputs:
     dev:
       type: duckdb
-      path: warehouse/trivia.duckdb
+      path: ../data/gold/trivia.duckdb   # couche gold du médaillon, au format DuckDB (cf. brief)

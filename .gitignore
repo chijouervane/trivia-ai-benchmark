@@ -3,27 +3,24 @@
 __pycache__/
 *.pyc
 
-# Data (keep structure, ignore large generated files)
+# Données (on garde les dossiers, on ignore les fichiers générés)
 data/bronze/*.csv
 data/silver/*.parquet
 data/gold/*.duckdb
-!data/bronze/.gitkeep
-!data/silver/.gitkeep
 !data/gold/.gitkeep
 
 # dbt
 dbt/target/
-dbt/dbt_packages/
 dbt/logs/
-dbt/warehouse/*.duckdb
+dbt/.user.yml
 
-# Env / secrets
+# Variables d'environnement / secrets
 .env
 
-# OS / editor
+# Système / éditeur
 .DS_Store
 .vscode/
 .idea/
 
-# Local docs (not versioned)
+# Documentation locale (non versionnée)
 docs/
