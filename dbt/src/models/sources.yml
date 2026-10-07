@@ -8,12 +8,10 @@ sources:
   - name: silver
     tables:
       - name: questions
-        description: "Questions OpenTDB nettoyées (une ligne par question)"
         meta:
           external_location: "read_parquet('../data/silver/questions.parquet')"
 
       - name: ai_answers
-        description: "Réponses brutes des modèles (une ligne par question et par modèle)"
         meta:
           # Le * lit tous les modèles d'un coup, comme *_tracks.parquet dans le TP
           external_location: "read_parquet('../data/silver/ai_answers_*.parquet')"

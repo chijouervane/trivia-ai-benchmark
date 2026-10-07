@@ -1,6 +1,6 @@
 # Connexion de dbt à la base : lu automatiquement quand on lance dbt depuis le dossier dbt/
 # (aucun secret ici, seulement le chemin du fichier DuckDB local → peut être versionné)
-trivia_tp:
+trivia_benchmark:
   target: dev
   outputs:
     dev:

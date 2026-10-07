@@ -4,7 +4,7 @@ Scraping de toutes les questions vérifiées d'Open Trivia DB → couche bronze.
 L'API renvoie du JSON ; on l'enregistre tel quel (entités HTML comprises)
 dans data/bronze/questions_raw.csv. Le nettoyage se fait plus tard, en silver.
 
-Lancement : uv run python scripts/scrape_opentdb.py   (~10 min)
+Lancement : uv run python scripts/scrape_opentdb.py
 """
 
 import time
@@ -46,6 +46,6 @@ while remaining > 0:
     print(f"{len(all_questions)} questions récupérées")
 
 # JSON → CSV : une ligne par question, une colonne par clé JSON
-OUTPUT.parent.mkdir(parents=True, exist_ok=True)  # data/bronze/ n'existe pas après un git clone
+OUTPUT.parent.mkdir(parents=True, exist_ok=True)  # si data/bronze/ n'existe pas après un git clone
 pd.DataFrame(all_questions).to_csv(OUTPUT, index=False)
 print(f"{len(all_questions)} questions enregistrées dans {OUTPUT}")

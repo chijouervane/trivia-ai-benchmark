@@ -1,26 +1,15 @@
 # Python
 .venv/
-__pycache__/
-*.pyc
 
 # Données (on garde les dossiers, on ignore les fichiers générés)
 data/bronze/*.csv
 data/silver/*.parquet
 data/gold/*.duckdb
-!data/gold/.gitkeep
 
 # dbt
 dbt/target/
 dbt/logs/
 dbt/.user.yml
-
-# Variables d'environnement / secrets
-.env
-
-# Système / éditeur
-.DS_Store
-.vscode/
-.idea/
 
 # Documentation locale (non versionnée)
 docs/

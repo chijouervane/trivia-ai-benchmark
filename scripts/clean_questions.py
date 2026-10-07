@@ -7,7 +7,7 @@ Lit data/bronze/questions_raw.csv et écrit data/silver/questions.parquet :
     3. suppression des doublons présents dans la source
     4. préparation des choix mélangés pour le prompt (colonne choices)
 
-Lancement : uv run python scripts/clean_questions.py   (quelques secondes)
+Lancement : uv run python scripts/clean_questions.py
 """
 
 import ast
@@ -28,7 +28,7 @@ random.seed(42)
 
 
 def make_id(question, correct_answer):
-    """Clé de hachage calculée à partir du contenu (Cours 2 : pas d'ID auto-incrémenté)."""
+    """Clé de hachage SHA256 de la question + bonne réponse, tronquée à 16 caractères"""
     key = f"{question}|{correct_answer}"
     return hashlib.sha256(key.encode("utf-8")).hexdigest()[:16]
 
@@ -39,7 +39,7 @@ def shuffle_choices(row):
     random.shuffle(choices)
     return choices
 
-
+# df = the table read from the CSV
 df = pd.read_csv(INPUT)
 print(f"{len(df)} questions lues depuis le bronze")
 
@@ -63,7 +63,7 @@ print(f"{duplicates} doublon(s) supprimé(s)")
 # 4. Choix proposés au modèle (QCM : 4 choix, vrai/faux : 2 choix)
 df["choices"] = df.apply(shuffle_choices, axis=1)
 
-# Écriture en Parquet compressé zstd (comme le script du cours), question_id en premier
+# Écriture en Parquet compressé zstd, question_id en premier
 columns = ["question_id", "type", "difficulty", "category", "question",
            "correct_answer", "incorrect_answers", "choices"]
 OUTPUT.parent.mkdir(parents=True, exist_ok=True)

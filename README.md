@@ -43,7 +43,7 @@ API OpenTDB ──► BRONZE ──────────────► SILVE
 │   ├── profiles.yml           # connexion DuckDB (aucun secret, lu depuis dbt/)
 │   └── src/models/
 │       ├── sources.yml        # déclaration des fichiers Parquet silver
-│       ├── staging/           # vues — stg_questions, stg_ai_answers (+ tests)
+│       ├── staging/           # vues — stg_questions, stg_ai_answers
 │       ├── intermediate/      # table — int_questions_with_answers (jointure)
 │       └── marts/             # tables (schéma gold) — 1 modèle par question métier
 ├── app/app.py      # dashboard Streamlit
@@ -73,7 +73,7 @@ Toutes les commandes depuis la racine du projet, sauf dbt (depuis `dbt/`).
 | 1. Bronze : scraping | `uv run python scripts/scrape_opentdb.py` | `data/bronze/questions_raw.csv` | ~10 min (limite de l'API) |
 | 2. Silver : nettoyage | `uv run python scripts/clean_questions.py` | `data/silver/questions.parquet` | quelques secondes |
 | 3. Silver : réponses IA | `uv run python scripts/enrich_ollama.py gemma2:2b` puis `… qwen2.5:1.5b` | `data/silver/ai_answers_<modele>.parquet` | ~10 min par modèle sur GPU, ~3–4 h sur CPU |
-| 4. Gold : dbt | `cd dbt && uv run dbt run && uv run dbt test` | `data/gold/trivia.duckdb` | quelques secondes |
+| 4. Gold : dbt | `cd dbt && uv run dbt run` | `data/gold/trivia.duckdb` | quelques secondes |
 | 5. Dashboard | `uv run streamlit run app/app.py` | application web | — |
 
 Lignage dbt (graphe visuel) : `cd dbt && uv run dbt docs generate && uv run dbt docs serve`.
@@ -117,7 +117,6 @@ Lignage dbt (graphe visuel) : `cd dbt && uv run dbt docs generate && uv run dbt 
 ### Gold — dbt + DuckDB
 - **Sources** : les Parquet silver sont déclarés une seule fois dans `sources.yml` (`read_parquet`, avec `ai_answers_*.parquet` pour lire tous les modèles).
 - **Staging** (vues) : `stg_questions` (+ lettre de la bonne réponse), `stg_ai_answers` (+ lettre choisie, sans la colonne `prompt`). Seul le staging lit les sources.
-- **Tests de qualité** (`dbt test`) : `question_id` unique et non nul, chaque réponse reliée à une question existante.
 - **Intermediate** (table) : `int_questions_with_answers`, la jointure réponses × questions réutilisée par tous les marts.
 - **Marts** (tables, schéma gold — `main_gold` dans DuckDB) :
 

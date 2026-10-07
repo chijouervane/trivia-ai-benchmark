@@ -1,6 +1,6 @@
 name: 'projet_trivia'
 version: '1.0.0'
-profile: 'trivia_tp'
+profile: 'trivia_benchmark'
 
 model-paths: ['src/models']
 
